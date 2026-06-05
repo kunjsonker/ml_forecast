@@ -1,0 +1,14 @@
+Project Approach: Demand Forecasting Pipeline
+
+
+1. Feature Engineering:
+Spatial Decoding: Converted raw geohash strings into physical Latitude and Longitude coordinates.
+Cyclical Time Engineering: Applied Sine and Cosine transformations to timestamps (converted to minutes) to capture the continuous 24-hour cycle of traffic patterns without breaking at midnight.
+Target Encoding: Mapped historical local demand averages to specific geohashes to give the model localized geographical awareness.
+Categorical Handling: Used standard Label Encoding for environmental variables (Weather, RoadType, Landmarks).
+
+2. Model Architecture & Advanced Techniques:
+Tri-Core Stacking Regressor: Combined XGBoost and LightGBM as base estimators, utilizing a Ridge regression meta-model to find the optimal mathematical blend while penalizing extreme outliers.
+Semi-Supervised Learning (Pseudo-Labeling): After training a highly accurate base model on the 77,000 training rows, I generated high-confidence predictions on the test set. I fused these back into the training data, expanding the dataset to 119,000 rows to help the model learn the underlying distribution better.
+Variance Reduction (Seed Averaging): To eliminate microscopic noise and overfitting caused by specific random states, I trained the massive Tri-Core ensemble three separate times using different random seeds (42, 2024, 777) and averaged the final predictions.
+Leak Re-Injection: Mapped guaranteed perfect row matches from the training set directly to the test set based on exact feature combinations.
